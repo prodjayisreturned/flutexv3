@@ -81,7 +81,12 @@ MainTab:CreateSlider({
 
 -- Game-Specific Script Hub Tab
 local GameTab = Window:CreateTab("Games", 4483362458)
-
+MainTab:CreateButton({
+   Name = "Zekrom hub",
+   Callback = function()
+     loadstring(Game:HttpGet"https://raw.githubusercontent.com/ahmadsgamer2/Zekrom-Hub-X/main/Zekrom-Hub-X-exe")()
+   end,
+})
 -- Game Hubs by PlaceId
 local PlaceId = game.PlaceId
 local GameHubs = {
@@ -132,7 +137,13 @@ local GameHubs = {
       }
    }
 }
-
+[10449761463] = { -- The Strongest Battlegrounds
+      Name = "The Strongest Battlegrounds",
+      Hubs = {
+         {Name = "Hoho Hub", Url = "https://raw.githubusercontent.com/prodjayisreturned/flutexv3/refs/heads/prodjayisreturned-patch-2/speed%20hub%20x(ONLY%20FOR%20MY%20HUB)"}
+      }
+   }
+}
 -- Load game-specific hub if supported
 local gameData = GameHubs[PlaceId]
 if gameData then
