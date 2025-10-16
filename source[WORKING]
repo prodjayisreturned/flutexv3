@@ -1,169 +1,343 @@
--- Load Rayfield UI Library
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+-- Add Just a Baseplate to your GameHubs table with full scripts
+GameHubs[17574618959] = { -- Just a Baseplate
+    Name = "Just a Baseplate",
+    Hubs = {
+        {
+            Name = "Animation Player GUI",
+            Callback = function()
+                -- Full Animation Player GUI script
+                local Players = game:GetService("Players")
+                local TweenService = game:GetService("TweenService")
+                local UserInputService = game:GetService("UserInputService")
+                local player = Players.LocalPlayer
 
--- Create the main window
-local Window = Rayfield:CreateWindow({
-   Name = "Main",
-   Icon = 0,
-   LoadingTitle = "Made By prodjay",
-   LoadingSubtitle = "FluteX Hub is cool",
-   Theme = "Default",
-   DisableRayfieldPrompts = false,
-   DisableBuildWarnings = false,
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = nil,
-      FileName = "Big Hub"
-   },
-   Discord = {
-      Enabled = false,
-      Invite = "noinvitelink",
-      RememberJoins = true
-   },
-   KeySystem = false,
-   KeySettings = {
-      Title = "FluteX Hub",
-      Subtitle = "Key System",
-      Note = "No method of obtaining the key is provided",
-      FileName = "Key",
-      SaveKey = true,
-      GrabKeyFromSite = false,
-      Key = {"Hello"}
-   }
-})
+                local function makeDraggable(frame)
+                    local dragToggle, dragStart, startPos
+                    local function update(input)
+                        local delta = input.Position - dragStart
+                        frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+                    end
+                    frame.InputBegan:Connect(function(input)
+                        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                            dragToggle = true
+                            dragStart = input.Position
+                            startPos = frame.Position
+                            input.Changed:Connect(function()
+                                if input.UserInputState == Enum.UserInputState.End then
+                                    dragToggle = false
+                                end
+                            end)
+                        end
+                    end)
+                    frame.InputChanged:Connect(function(input)
+                        if dragToggle and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+                            update(input)
+                        end
+                    end)
+                end
 
--- Create the main tab
-local MainTab = Window:CreateTab("Main", 4483362458)
+                local function createGui()
+                    if player:FindFirstChild("PlayerGui") then
+                        local old = player.PlayerGui:FindFirstChild("AnimPlayer")
+                        if old then old:Destroy() end
+                    end
+                    local gui = Instance.new("ScreenGui")
+                    gui.Name = "AnimPlayer"
+                    gui.ResetOnSpawn = false
+                    gui.Parent = player:WaitForChild("PlayerGui")
 
--- Infinite Yield Button
-MainTab:CreateButton({
-   Name = "Infinite yield",
-   Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
-   end,
-})
+                    local frame = Instance.new("Frame")
+                    frame.Size = UDim2.new(0, 360, 0, 460)
+                    frame.Position = UDim2.new(0.5, -180, 0.5, -230)
+                    frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+                    frame.BackgroundTransparency = 1
+                    frame.Parent = gui
+                    Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 
--- Infinite Jump Toggle
-MainTab:CreateToggle({
-   Name = "Infinite jump (T to enable/disable inf jump and F to enable/disable anti-jump bypass)",
-   CurrentValue = false,
-   Flag = "Toggle1",
-   Callback = function()
-      -- Add Infinite Jump logic here if needed
-   end,
-})
+                    local layout = Instance.new("UIListLayout", frame)
+                    layout.Padding = UDim.new(0, 8)
+                    layout.SortOrder = Enum.SortOrder.LayoutOrder
+                    layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- Walkspeed Slider
-MainTab:CreateSlider({
-   Name = "Walkspeed",
-   Range = {16, 1000},
-   Increment = 10,
-   Suffix = "Walkspeed",
-   CurrentValue = 16,
-   Flag = "WalkspeedSlider",
-   Callback = function(v)
-      game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v
-   end,
-})
+                    local title = Instance.new("TextLabel", frame)
+                    title.Text = "🎬 Animation Player"
+                    title.Size = UDim2.new(1, -16, 0, 36)
+                    title.BackgroundTransparency = 1
+                    title.Font = Enum.Font.GothamBold
+                    title.TextColor3 = Color3.new(1, 1, 1)
+                    title.TextScaled = true
+                    title.LayoutOrder = 1
 
--- JumpPower Slider
-MainTab:CreateSlider({
-   Name = "JumpPower",
-   Range = {50, 500},
-   Increment = 10,
-   Suffix = "JumpPower",
-   CurrentValue = 50,
-   Flag = "JumpPowerSlider",
-   Callback = function(v)
-      game.Players.LocalPlayer.Character.Humanoid.JumpPower = v
-   end,
-})
+                    makeDraggable(frame)
+                    return gui, frame
+                end
 
--- Game-Specific Script Hub Tab
-local GameTab = Window:CreateTab("Games", 4483362458)
+                local function makeSection(parent, name)
+                    local section = Instance.new("Frame", parent)
+                    section.Size = UDim2.new(0.95, 0, 0, 0)
+                    section.BackgroundTransparency = 1
+                    section.AutomaticSize = Enum.AutomaticSize.Y
+                    section.LayoutOrder = 2
 
-MainTab:CreateButton({
-   Name = "Zekrom hub",
-   Callback = function()
-      loadstring(game:HttpGet("https://raw.githubusercontent.com/ahmadsgamer2/Zekrom-Hub-X/main/Zekrom-Hub-X-exe"))()
-   end,
-})
+                    local layout = Instance.new("UIListLayout", section)
+                    layout.Padding = UDim.new(0, 6)
+                    layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- Game Hubs by PlaceId
-local PlaceId = game.PlaceId
-local GameHubs = {
-   [142823291] = { -- Murder Mystery 2
-      Name = "Murder Mystery 2",
-      Hubs = {
-         {Name = "Eclipse", Url = "https://raw.githubusercontent.com/Ethanoj1/EclipseMM2/master/Script"},
-         {Name = "Xhub", Url = "https://raw.githubusercontent.com/Au0yX/Community/main/XhubMM2"},
-         {Name = "Vynixu", Url = "https://raw.githubusercontent.com/Vynixu/Utilities/main/MM2.lua"}
-      }
-   },
-   [2753915549] = { -- Blox Fruits
-      Name = "Blox Fruits",
-      Hubs = {
-         {Name = "Hoho Hub", Url = "https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI"},
-         {Name = "Mukuro Hub", Url = "https://raw.githubusercontent.com/xQuartyx/DonateMe/main/ScriptLoader"}
-      }
-   },
-   [6516141723] = { -- DOORS
-      Name = "DOORS",
-      Hubs = {
-         {Name = "Vynixius", Url = "https://raw.githubusercontent.com/RegularVynixu/Vynixius/main/Doors/Script.lua"},
-         {Name = "Darkrai Hub", Url = "https://raw.githubusercontent.com/GamingScripter/Animation-Hub/main/Animation%20Gui"}
-      }
-   },
-   [537413528] = { -- Brookhaven
-      Name = "Brookhaven",
-      Hubs = {
-         {Name = "Hoho Hub", Url = "https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI"}
-      }
-   },
-   [606849621] = { -- Arsenal
-      Name = "Arsenal",
-      Hubs = {
-         {Name = "Zap Hub", Url = "https://itots.tk/zaphub/ZapHubFreeVersion"}
-      }
-   },
-   [8540346411] = { -- Pet Simulator X
-      Name = "Pet Sim X",
-      Hubs = {
-         {Name = "Random PetSimX GUI", Url = "https://raw.githubusercontent.com/randomuser9271/GUI/main/2u21u1"}
-      }
-   },
-   [4442272183] = { -- Tower of Hell
-      Name = "Tower of Hell",
-      Hubs = {
-         {Name = "Hoho Hub", Url = "https://raw.githubusercontent.com/acsu123/HOHO_H/main/Loading_UI"}
-      }
-   }, -- <-- Added this comma to fix your table!
-   [10449761463] = { -- The Strongest Battlegrounds
-      Name = "The Strongest Battlegrounds",
-      Hubs = {
-         {Name = "Hoho Hub", Url = "https://raw.githubusercontent.com/prodjayisreturned/flutexv3/prodjayisreturned-patch-2/speed%20hub%20x(ONLY%20FOR%20MY%20HUB)"}
-      }
-   }
+                    local label = Instance.new("TextLabel", section)
+                    label.Text = "— " .. name .. " —"
+                    label.Size = UDim2.new(1, 0, 0, 26)
+                    label.BackgroundTransparency = 1
+                    label.Font = Enum.Font.GothamBold
+                    label.TextColor3 = Color3.new(1, 1, 1)
+                    label.TextScaled = true
+                    label.LayoutOrder = 1
+
+                    return section
+                end
+
+                local function makeButton(parent, text)
+                    local b = Instance.new("TextButton")
+                    b.Size = UDim2.new(1, 0, 0, 32)
+                    b.Text = text
+                    b.Font = Enum.Font.GothamBold
+                    b.TextColor3 = Color3.new(1, 1, 1)
+                    b.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+                    Instance.new("UICorner", b).CornerRadius = UDim.new(0, 8)
+                    b.LayoutOrder = 2
+                    b.Parent = parent
+                    return b
+                end
+
+                local function playAnimToggle(humanoid, id, button, activeTracks)
+                    if activeTracks[id] and activeTracks[id].IsPlaying then
+                        activeTracks[id]:Stop()
+                        activeTracks[id] = nil
+                        button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+                        return
+                    end
+                    local anim = Instance.new("Animation")
+                    anim.AnimationId = "rbxassetid://" .. id
+                    local track = humanoid:LoadAnimation(anim)
+                    activeTracks[id] = track
+                    track:Play()
+                    button.BackgroundColor3 = Color3.fromRGB(0, 170, 85)
+                    track.Stopped:Connect(function()
+                        if activeTracks[id] == track then activeTracks[id] = nil end
+                        if button and button.Parent then
+                            button.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+                        end
+                    end)
+                end
+
+                local function playFromAnimateToggle(humanoid, animate, folderName, childName, button, activeTracks)
+                    if not animate then return end
+                    local folder = animate:FindFirstChild(folderName)
+                    if not folder then return end
+                    local animObj = folder:FindFirstChild(childName)
+                    if not animObj or not animObj:IsA("Animation") then return end
+                    local id = tonumber(animObj.AnimationId:match("%d+"))
+                    if id then playAnimToggle(humanoid, id, button, activeTracks) end
+                end
+
+                local function setupButtons(frame, humanoid, animate)
+                    local activeTracks = {}
+
+                    -- R15
+                    local r15Section = makeSection(frame, "R15")
+                    local r15Anims = {
+                        { "Idle", "idle", "Animation1" },
+                        { "Run", "run", "RunAnim" },
+                        { "Jump", "jump", "JumpAnim" },
+                        { "Fall", "fall", "FallAnim" },
+                        { "Climb", "climb", "ClimbAnim" },
+                    }
+                    for _, info in ipairs(r15Anims) do
+                        local b = makeButton(r15Section, info[1])
+                        b.MouseButton1Click:Connect(function()
+                            playFromAnimateToggle(humanoid, animate, info[2], info[3], b, activeTracks)
+                        end)
+                    end
+
+                    -- R6
+                    local r6Section = makeSection(frame, "R6")
+                    local r6Anims = { Idle = 180435571, Run = 180426354, Jump = 125750702 }
+                    for name, id in pairs(r6Anims) do
+                        local b = makeButton(r6Section, name)
+                        b.MouseButton1Click:Connect(function()
+                            playAnimToggle(humanoid, id, b, activeTracks)
+                        end)
+                    end
+
+                    -- R6 Emotes (Hidden)
+                    local r6EmoteSection = makeSection(frame, "R6 Emotes")
+                    r6EmoteSection.Visible = false
+
+                    local r6Emotes = {
+                        Wave = 507770239, Point = 507770453, Cheer = 507770677,
+                        Dance1 = 507771019, Dance2 = 507771955, Dance3 = 507772104
+                    }
+                    for name, id in pairs(r6Emotes) do
+                        local b = makeButton(r6EmoteSection, name)
+                        b.MouseButton1Click:Connect(function()
+                            playAnimToggle(humanoid, id, b, activeTracks)
+                        end)
+                    end
+
+                    -- 🎭 Button next to GUI
+                    local openButton = Instance.new("TextButton")
+                    openButton.Text = "🎭"
+                    openButton.Font = Enum.Font.GothamBold
+                    openButton.TextScaled = true
+                    openButton.Size = UDim2.new(0, 40, 0, 40)
+                    openButton.Position = UDim2.new(1, 8, 0.5, -20)
+                    openButton.BackgroundColor3 = Color3.fromRGB(45, 45, 45)
+                    openButton.Parent = frame
+                    Instance.new("UICorner", openButton).CornerRadius = UDim.new(0, 8)
+
+                    local isOpen = false
+                    openButton.MouseButton1Click:Connect(function()
+                        isOpen = not isOpen
+                        if isOpen then
+                            r6EmoteSection.Visible = true
+                            TweenService:Create(r6EmoteSection, TweenInfo.new(0.3), { BackgroundTransparency = 0.1 }):Play()
+                        else
+                            TweenService:Create(r6EmoteSection, TweenInfo.new(0.3), { BackgroundTransparency = 1 }):Play()
+                            task.wait(0.3)
+                            r6EmoteSection.Visible = false
+                        end
+                    end)
+                end
+
+                local function buildGuiForCharacter(char)
+                    local humanoid = char:WaitForChild("Humanoid")
+                    local animate = char:FindFirstChild("Animate")
+                    local gui, frame = createGui()
+
+                    local loading = Instance.new("TextLabel", frame)
+                    loading.Text = "Loading Anim Player..."
+                    loading.Size = UDim2.new(1, -16, 0, 40)
+                    loading.Position = UDim2.new(0, 8, 0, 48)
+                    loading.Font = Enum.Font.GothamBold
+                    loading.TextScaled = true
+                    loading.TextColor3 = Color3.new(1, 1, 1)
+                    loading.BackgroundTransparency = 1
+
+                    TweenService:Create(frame, TweenInfo.new(0.4), { BackgroundTransparency = 0.08 }):Play()
+                    task.wait(0.6)
+                    loading:Destroy()
+
+                    setupButtons(frame, humanoid, animate)
+                end
+
+                local function onCharacterAdded(char)
+                    task.wait(0.4)
+                    buildGuiForCharacter(char)
+                end
+
+                player.CharacterAdded:Connect(onCharacterAdded)
+                if player.Character then
+                    onCharacterAdded(player.Character)
+                end
+            end
+        },
+        {
+            Name = "Rainbow Animation Speed GUI",
+            Callback = function()
+                -- Full Rainbow Animation Speed GUI script
+                if game:GetService("CoreGui"):FindFirstChild("AnimSpeedGUI") then
+                    game:GetService("CoreGui"):FindFirstChild("AnimSpeedGUI"):Destroy()
+                end
+
+                local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+                ScreenGui.Name = "AnimSpeedGUI"
+
+                local Frame = Instance.new("Frame", ScreenGui)
+                Frame.Size = UDim2.new(0, 250, 0, 140)
+                Frame.Position = UDim2.new(0.5, -125, 0.5, -70)
+                Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+                Frame.Active = true
+                Frame.Draggable = true
+                Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 12)
+
+                local Title = Instance.new("TextLabel", Frame)
+                Title.Text = "Animation Speed GUI"
+                Title.Size = UDim2.new(1, 0, 0, 30)
+                Title.BackgroundTransparency = 1
+                Title.TextColor3 = Color3.new(1, 1, 1)
+                Title.Font = Enum.Font.GothamBold
+                Title.TextScaled = true
+
+                local Box = Instance.new("TextBox", Frame)
+                Box.PlaceholderText = "Enter Speed (e.g. 5)"
+                Box.Text = ""
+                Box.Size = UDim2.new(0.8, 0, 0, 35)
+                Box.Position = UDim2.new(0.1, 0, 0.4, 0)
+                Box.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+                Box.TextColor3 = Color3.new(1, 1, 1)
+                Box.Font = Enum.Font.Gotham
+                Box.TextScaled = true
+                Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 8)
+
+                local SetButton = Instance.new("TextButton", Frame)
+                SetButton.Text = "Set Speed"
+                SetButton.Size = UDim2.new(0.8, 0, 0, 35)
+                SetButton.Position = UDim2.new(0.1, 0, 0.7, 0)
+                SetButton.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+                SetButton.TextColor3 = Color3.new(1, 1, 1)
+                SetButton.Font = Enum.Font.GothamBold
+                SetButton.TextScaled = true
+                Instance.new("UICorner", SetButton).CornerRadius = UDim.new(0, 8)
+
+                task.spawn(function()
+                    while task.wait() do
+                        local t = tick() * 2
+                        Frame.BackgroundColor3 = Color3.fromHSV((t % 1), 1, 1)
+                    end
+                end)
+
+                local speed = 1
+                SetButton.MouseButton1Click:Connect(function()
+                    local val = tonumber(Box.Text)
+                    if val then
+                        speed = val
+                        SetButton.Text = "Speed Set: " .. val
+                    else
+                        SetButton.Text = "Invalid Input"
+                    end
+                end)
+
+                local function AdjustAllAnimations(char)
+                    local hum = char:FindFirstChildOfClass("Humanoid") or char:FindFirstChildOfClass("AnimationController")
+                    if hum then
+                        for _, track in pairs(hum:GetPlayingAnimationTracks()) do
+                            pcall(function()
+                                track:AdjustSpeed(speed)
+                            end)
+                        end
+                    end
+
+                    for _, tool in pairs(char:GetChildren()) do
+                        if tool:IsA("Tool") then
+                            local handleAnim = tool:FindFirstChildOfClass("AnimationController")
+                            if handleAnim then
+                                for _, track in pairs(handleAnim:GetPlayingAnimationTracks()) do
+                                    pcall(function()
+                                        track:AdjustSpeed(speed)
+                                    end)
+                                end
+                            end
+                        end
+                    end
+                end
+
+                task.spawn(function()
+                    while task.wait() do
+                        local plr = game.Players.LocalPlayer
+                        local char = plr.Character or plr.CharacterAdded:Wait()
+                        AdjustAllAnimations(char)
+                    end
+                end)
+            end
+        }
+    }
 }
-
--- Load game-specific hub if supported
-local gameData = GameHubs[PlaceId]
-if gameData then
-   local GameSpecificTab = Window:CreateTab(gameData.Name, 4483362458)
-   for _, hub in ipairs(gameData.Hubs) do
-      GameSpecificTab:CreateButton({
-         Name = hub.Name,
-         Callback = function()
-            task.spawn(function()
-               loadstring(game:HttpGet(hub.Url))()
-            end)
-         end,
-      })
-   end
-else
-   local OtherTab = Window:CreateTab("Unknown Game", 4483362458)
-   OtherTab:CreateParagraph({
-      Title = "No Hubs Found",
-      Content = "This game isn't supported by FluteX Hub yet."
-   })
-end
